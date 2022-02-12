@@ -1,271 +1,253 @@
-kaboom()
+kaboom();
 
-loadSprite("bag", "bag.png")
-loadSprite("ghosty", "ghosty.png")
-loadSprite("grass", "grass.png")
-loadSprite("steel", "steel.png")
-loadSprite("door", "door.png")
-loadSprite("key", "key.png")
-loadSprite("honeychuckles", "honeychuckles.png")
-loadSprite("bg", "bg.png")
-loadSprite("milk", "milk.png")
-loadSprite("water", "water.png")
-loadSprite("cooler", "cooler.png")
-loadSprite("sponsor", "sponsor.png")
-loadSprite("bg", "bg.png")
-
+loadSprite("bag", "bag.png");
+loadSprite("ghosty", "ghosty.png");
+loadSprite("grass", "grass.png");
+loadSprite("steel", "steel.png");
+loadSprite("door", "door.png");
+loadSprite("key", "key.png");
+loadSprite("honeychuckles", "honeychuckles.png");
+loadSprite("bg", "bg.png");
+loadSprite("milk", "milk.png");
+loadSprite("water", "water.png");
+loadSprite("cooler", "cooler.png");
+loadSprite("sponsor", "sponsor.png");
+loadSprite("bg", "bg.png");
 
 scene("main", (levelIdx) => {
+  const SPEED = 320;
 
-	const SPEED = 320
+  const background = add([sprite("bg", { width: width(), height: height() })]);
+  const keyCount = add([text("Key?:0"), pos(24, 500), { value: 0 }]);
+  const score = add([text("Score:0"), pos(24, 1000), { value: 0 }]);
+  // character dialog data
+  const characters = {
+    a: {
+      sprite: "bag",
+      msg: "ohhi how are you?",
+    },
+    b: {
+      sprite: "ghosty",
+      msg: "get out!",
+    },
+  };
 
-    const background = add ([
-        sprite("bg", {width: width(), height: height()})
-    ])
-	// character dialog data
-	const characters = {
-		"a": {
-			sprite: "bag",
-			msg: "ohhi how are you?",
-		},
-		"b": {
-			sprite: "ghosty",
-			msg: "get out!",
-		},
-	}
-
-	// level layouts
-	const levels = [
-		[
-            "=====|===",
-            "= w   o =",
-            "= a     =",
-            "= d  r  =",
-            "=       =",
-            "= $     =",
-            "=    s  =",
-            "=   @   =",
-            "=========",
-		],
-		   ["---------",
-            "-   l   -",
-            "- e   t -",
-            "-  $    -",
-            "t    e  -",
-            "- r     -",
-            "-     s -",
-            "-   @   -",
-            "---------",
-		],
-	]
-
-	addLevel(levels[levelIdx], {
-		width: 300,
-		height: 150,
-		pos: vec2(64, 64),
-        "w": () => [
-            sprite("milk"),
-            area(),
-            solid(),
-            pos(100,30),
-            scale(4),
-            "milk",
-        ],
-        "o": () => [
-            sprite("water"),
-            area(),
-            solid(),
-            pos(100,20),
-            scale(2),
-            "water",
-        ],
-        "r": () => [
-        sprite("cooler"),
-        area(),
-        solid(),
-        pos(100,30),
-        scale(2),
-        "cooler",
+  // level layouts
+  const levels = [
+    [
+      " ====|===",
+      " = w   o=",
+      " = a    =",
+      " = d  r =",
+      " =      =",
+      " = $    =",
+      " =    s =",
+      " =  @   =",
+      " ========",
     ],
-    "d": () => [
-        sprite("sponsor"),
-        area(),
-        solid(),
-        pos(100,30),
-        scale(2),
-        "sponsor",
+    [
+      "---------",
+      "-   l   -",
+      "- e   t -",
+      "-  $    -",
+      "t    e  -",
+      "- r     -",
+      "-     s -",
+      "-   @   -",
+      "---------",
     ],
-		"=": () => [
-			sprite("grass"),
-			area(),
-			solid(),
-		],
-		"-": () => [
-			sprite("steel"),
-			area(),
-			solid(),
-		],
-		"$": () => [
-			sprite("key"),
-			area(),
-			"key",
-		],
-		"@": () => [
-			sprite("honeychuckles"),
-			area(),
-			solid(),
-			"player",
-		],
-		"|": () => [
-			sprite("door"),
-			area(),
-			solid(),
-			"door",
-		],
-		// any() is a special function that gets called everytime there's a
-		// symbole not defined above and is supposed to return what that symbol
-		// means
-		any(ch) {
-			const char = characters[ch]
-			if (char) {
-				return [
-					sprite(char.sprite),
-					area(),
-					solid(),
-					"character",
-					{ msg: char.msg, },
-				]
-			}
-		},
-	})
+  ];
 
-	// get the player game obj by tag
-	const player = get("player")[0]
-    const milk = get("milk")[0]
-    const water = get("water")[0]
-    const cooler = get("cooler")[0]
-    // const sponsor = get("sponsor")[0]
-	function addDialog() {
-		const h = 160
-		const pad = 16
-		const bg = add([
-			pos(0, height() - h),
-			rect(width(), h),
-			color(0, 0, 0),
-			z(100),
-		])
-		const txt = add([
-			text("", {
-				width: width(),
-			}),
-			pos(0 + pad, height() - h + pad),
-			z(100),
-		])
-		bg.hidden = true
-		txt.hidden = true
-		return {
-			say(t) {
-				txt.text = t
-				bg.hidden = false
-				txt.hidden = false
-			},
-			dismiss() {
-				if (!this.active()) {
-					return
-				}
-				txt.text = ""
-				bg.hidden = true
-				txt.hidden = true
-			},
-			active() {
-				return !bg.hidden
-			},
-			destroy() {
-				bg.destroy()
-				txt.destroy()
-			},
-		}
-	}
+  addLevel(levels[levelIdx], {
+    width: 300,
+    height: 180,
+    pos: vec2(64, 64),
+    w: () => [sprite("milk"), area(), solid(), pos(100, 700), scale(4), "milk"],
+    o: () => [
+      sprite("water"),
+      area(),
+      solid(),
+      pos(100, 20),
+      scale(2),
+      "water",
+    ],
+    r: () => [
+      sprite("cooler"),
+      area(),
+      solid(),
+      pos(100, 30),
+      scale(2),
+      "cooler",
+    ],
+    d: () => [
+      sprite("sponsor"),
+      area(),
+      solid(),
+      pos(100, 30),
+      scale(2),
+      "sponsor",
+    ],
+    "=": () => [sprite("grass"), area(), solid()],
+    "-": () => [sprite("steel"), area(), solid()],
+    $: () => [sprite("key"), area(), "key"],
+    "@": () => [sprite("honeychuckles"), area(), solid(), "player", scale(3)],
+    "|": () => [sprite("door"), area(), solid(), "door"],
+    // any() is a special function that gets called everytime there's a
+    // symbole not defined above and is supposed to return what that symbol
+    // means
+    any(ch) {
+      const char = characters[ch];
+      if (char) {
+        return [
+          sprite(char.sprite),
+          area(),
+          solid(),
+          "character",
+          { msg: char.msg },
+        ];
+      }
+    },
+  });
 
-	let hasKey = false
-	const dialog = addDialog()
+  // get the player game obj by tag
+  const player = get("player")[0];
+  const milk = get("milk")[0];
+  const water = get("water")[0];
+  const cooler = get("cooler")[0];
+  const sponsor = get("sponsor")[0];
+  // const sponsor = get("sponsor")[0]
+  function addDialog() {
+    const h = 160;
+    const pad = 16;
+    const bg = add([
+      pos(0, height() - h),
+      rect(width(), h),
+      color(0, 0, 0),
+      z(100),
+    ]);
+    const txt = add([
+      text("", {
+        width: width(),
+      }),
+      pos(0 + pad, height() - h + pad),
+      z(100),
+    ]);
+    bg.hidden = true;
+    txt.hidden = true;
+    return {
+      say(t) {
+        txt.text = t;
+        bg.hidden = false;
+        txt.hidden = false;
+      },
+      dismiss() {
+        if (!this.active()) {
+          return;
+        }
+        txt.text = "";
+        bg.hidden = true;
+        txt.hidden = true;
+      },
+      active() {
+        return !bg.hidden;
+      },
+      destroy() {
+        bg.destroy();
+        txt.destroy();
+      },
+    };
+  }
 
-	player.onCollide("key", (key) => {
-		destroy(key)
-		hasKey = true
-	})
+  let hasKey = false;
+  const dialog = addDialog();
 
-	player.onCollide("door", () => {
-		if (hasKey) {
-			if (levelIdx + 1 < levels.length) {
-				go("main", levelIdx + 1)
-			} else {
-				go("win")
-			}
-		} else {
-			dialog.say("you got no key!")
-		}
-	})
+  player.onCollide("key", (key) => {
+    destroy(key);
+    hasKey = true;
+    keyCount.value += 1;
+    keyCount.text = "Key?:" + 1;
+  });
 
-	// talk on touch
-	player.onCollide("character", (ch) => {
-		dialog.say(ch.msg)
-	})
-    wait(30, () => {
-		destroy(milk)
-	})
+  player.onCollide("door", () => {
+    if (hasKey) {
+      if (levelIdx + 1 < levels.length) {
+        go("main", levelIdx + 1);
+      } else {
+        go("win");
+      }
+    } else {
+      dialog.say("you got no key!");
+    }
+  });
 
-    wait(5, () => {
-        destroy(water)
-    } )
+  // talk on touch
+  player.onCollide("character", (ch) => {
+    dialog.say(ch.msg);
+  });
 
-    wait(3, () => {
-        destroy(cooler)
-    } )
+  let on = false;
+  function disAPPE() {
+    if ("water") {
+      wait(3, () => {
+        destroy(water);
+        on = true;
+      });
+      wait(2, () => {
+          add([
+              sprite("water"),
+              pos(1000,300),
+              "seco"
+          ])
+      })
+    }
+  }
+  disAPPE();
 
-    wait(7, () => {
-        destroy(cooler)
-    } )
+  // wait(15, () => {
+  //     destroy(water)
+  //     wait()
+  // } )
 
+  // wait(15, () => {
+  //     destroy(cooler)
+  // } )
 
+  // wait(15, () => {
+  //     destroy(cooler)
+  // } )
 
-    player.onCollide("milk", () => {
-        destroy(milk)
-        score.value += 3
-        score.text = "Score:" + score.value
-    })
-    player.onCollide("sponsor", () => {
-        destroy(sponsor)
-        score.value += 3
-        score.text = "Score:" + score.value
-    })
-	const dirs = {
-		"left": LEFT,
-		"right": RIGHT,
-		"up": UP,
-		"down": DOWN,
-	}
+  player.onCollide("milk", () => {
+    destroy(milk);
+    score.value += 3;
+    score.text = "Score:" + score.value;
+  });
+  player.onCollide("sponsor", () => {
+    destroy(sponsor);
+    score.value += 3;
+    score.text = "Score:" + score.value;
+  });
+  const dirs = {
+    left: LEFT,
+    right: RIGHT,
+    up: UP,
+    down: DOWN,
+  };
 
-	for (const dir in dirs) {
-		onKeyPress(dir, () => {
-			dialog.dismiss()
-		})
-		onKeyDown(dir, () => {
-			player.move(dirs[dir].scale(SPEED))
-		})
-	}
-
-})
+  for (const dir in dirs) {
+    onKeyPress(dir, () => {
+      dialog.dismiss();
+    });
+    onKeyDown(dir, () => {
+      player.move(dirs[dir].scale(SPEED));
+    });
+  }
+});
 
 scene("win", () => {
-	add([
-		text("You Win!"),
-		pos(width() / 2, height() / 2),
-		origin("center"),
-	])
-})
+  add([text("You Win!"), pos(width() / 2, height() / 2), origin("center")]);
+});
 
-go("main", 0)
+go("main", 0);
 // loadSprite("honeychuckles","honeychuckles.png")
 // loadSprite("bag", "bag.png")
 // loadSprite("ghosty", "ghosty.png")
@@ -279,7 +261,6 @@ go("main", 0)
 // loadSprite("sponsor", "sponsor.png")
 // loadSprite("bg", "bg.png")
 
-
 // scene("main", (levelIdx) => {
 //     const SPEED = 320
 //     const background = add ([
@@ -290,7 +271,7 @@ go("main", 0)
 //         pos(24, 24),
 //         { value: 0 },
 //     ])
-    
+
 //     // character dialog data
 //     const characters = {
 //         "a": {
@@ -328,8 +309,7 @@ go("main", 0)
 //             "---------",
 //         ],
 //     ]
-  
-    
+
 //     var words =["ability", "able", "aboard", "bank", "bat", "basket", "begun", "bare", "barn", "bark", "ball", "base", "belt", "balance"]
 //     addLevel(levels[levelIdx], {
 //         width: 300,
@@ -418,7 +398,6 @@ go("main", 0)
 //     const cooler = get("cooler")[0]
 //     // const sponsor = get("sponsor")[0]
 
-
 //     function addDialog() {
 //         const h = 160
 //         const pad = 16
@@ -502,8 +481,6 @@ go("main", 0)
 //         destroy(cooler)
 //     } )
 
-
-
 //     player.onCollide("milk", () => {
 //         destroy(milk)
 //         score.value += 3
@@ -525,7 +502,6 @@ go("main", 0)
 //     //      score += 1
 //     //  }
 //     // })
-
 
 //     const dirs = {
 //         "left": LEFT,
@@ -554,10 +530,6 @@ go("main", 0)
 // })
 
 // go("main", 0)
-
-
-
-
 
 // POS
 // // loadSprite("submitSprite", "submitSprite.png")
@@ -600,6 +572,4 @@ go("main", 0)
 // //     input.text += ch
 // // })
 
-
 // // })
-
