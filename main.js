@@ -30,14 +30,21 @@ loadSound("wrongWord", "wrongWord.mp3");
 scene("start", () => {
   const bg = add([sprite("bg", { width: width(), height: height() })]);
   add([
-    text("Press enter to start", { size: 100 }),
+    text("KeKy Game Project", { size: 200 }),
     pos(vec2(2000, 600)),
     origin("center"),
-    color(0, 0, 255),
-   
+    color(rgb(156, 211, 222)),
   ]);
 
-  
+  add([
+    text("Collect all the words to win", {size: 150}),
+    pos(vec2(700, 750)),
+  ]);
+  add([
+    text("Press enter to begin", {size: 100}),
+    pos(vec2(2005, 1000)),
+    origin("center"),
+  ]);
 
   onKeyRelease("enter", () => {
     go("main", 0);
