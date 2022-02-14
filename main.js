@@ -31,27 +31,39 @@ scene("start", () => {
   const bg = add([sprite("bg", { width: width(), height: height() })]);
   add([
     text(" KeKy Game Project", { size: 200 }),
-    pos(vec2(2100, 600)),
+    pos(vec2(2035, 600)),
     origin("center"),
     color(rgb(156, 211, 222)),
   ]);
 
   let curFont = 0
   let curSize = 48
-  const pad = 24
+  const pad = 100
+  const sprites = ["key"]
+  
   let instructions = add([
     pos(pad),
     text(`    Win each level by
     \n      reaching the 
     \n        goal and
-    \n  collecting the key!`, {size: 120}), 
-    pos(vec2(1150, 750)),
+    \n  collecting the key!`, {
+    //   width: width() - pad * 2,
+    //   size: curSize,
+		lineSpacing: 20,
+		letterSpacing: 40,
+    transform: (idx, ch) => ({
+			color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
+			scale: (2),
+			angle: wave(-9, 9, time() * 3 + idx),
+		}),
+    }, {size: 120}),
+    pos(vec2(1010, 990)),
   ]);
 
   
   add([
     text("Press enter to begin", {size: 100}),
-    pos(vec2(2005, 2000)),
+    pos(vec2(2030, 2010)),
     origin("center"),
   ]);
 
