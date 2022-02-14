@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width" />
     <title>Word Game</title>
-</head>
-<body> 
+  </head>
+  <body>
     <script src="https://unpkg.com/kaboom/dist/kaboom.js"></script>
-   <script defer src="main.js"></script>
-</body>
+    <!-- <div id="countdown">
+      <script>
+        var timeleft = 10;
+        var downloadTimer = setInterval(function () {
+          if (timeleft <= 0) {
+            clearInterval(downloadTimer);
+            document.getElementById("countdown").innerHTML = "Finished";
+          } else {
+            document.getElementById("countdown").innerHTML =
+              timeleft + " seconds remaining";
+          }
+          timeleft -= 1;
+        }, 1000);
+      </script>
+    </div> -->
+    <script id="jsFile" defer src="main.js"></script>
+  </body>
 </html>
