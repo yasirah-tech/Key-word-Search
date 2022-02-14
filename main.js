@@ -37,8 +37,12 @@ scene("start", () => {
   ]);
 
   add([
-    text("Collect all the words to win", {size: 150}),
+    text("Win each level by reaching the goal", {size: 150}),
     pos(vec2(700, 750)),
+  ]);
+  add([
+    text("and collecting the key", {size: 150}),
+    pos(vec2(800, 850)),
   ]);
   add([
     text("Press enter to begin", {size: 100}),
