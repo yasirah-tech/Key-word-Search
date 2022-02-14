@@ -1,3 +1,4 @@
+
 kaboom();
 
 loadSprite("bag", "bag.png");
@@ -58,7 +59,7 @@ scene("main", (levelIdx) => {
     ],
   ];
 
-  addLevel(levels[levelIdx], {
+  addLevel(levels[0], {
     width: 300,
     height: 180,
     pos: vec2(64, 64),
@@ -69,6 +70,7 @@ scene("main", (levelIdx) => {
       solid(),
       pos(100, 20),
       scale(2),
+     
       "water",
     ],
     r: () => [
@@ -77,6 +79,7 @@ scene("main", (levelIdx) => {
       solid(),
       pos(100, 30),
       scale(2),
+      
       "cooler",
     ],
     d: () => [
