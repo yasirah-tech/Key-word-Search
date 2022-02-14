@@ -8,7 +8,7 @@ loadSprite("front", "front.png");
 loadSprite("grass", "grass.png");
 loadSprite("steel", "steel.png");
 loadSprite("door", "door.png");
-loadSprite("jam", "jam.png");
+loadSprite("key", "key.png");
 loadSprite("honeychuckles", "honeychuckles.png");
 loadSprite("bg", "bg.png");
 loadSprite("milk", "milk.png");
@@ -34,7 +34,6 @@ scene("start", () => {
     pos(vec2(2000, 600)),
     origin("center"),
     color(0, 0, 255),
-   
   ]);
 
   
@@ -45,7 +44,6 @@ scene("start", () => {
 });
 
 go("start")
-
 
 
 scene("youWon", () => {
@@ -88,14 +86,13 @@ scene("main", (levelIdx) => {
   const SPEED = 320;
 
   const background = add([sprite("bg", { width: width(), height: height() })]);
-  const keyCount = add([text("Key?:0"), pos(24, 490), { value: 0 }]);
-  const score = add([text("Score:0"), pos(24, 1000),scale(.9), { value: 0 }]);
-  const fakes = add([text("Fakes:0"), pos(24, 810), { value: 0 }]);
-  const timer = add([text(""), pos(24, 360), scale(0.7),{ value: 0 }]);
-  const timerDialogue = add([text("Timer:"),pos(24, 260), { value: 0 }]);
-  const goal = add([text("Goal:20"), pos(24, 660), { value: 0 }]);
+  const keyCount = add([text("Key?:0"), pos(24, 490), color(253,207,9), { value: 0 }]);
+  const score = add([text("Score:0"), pos(24, 1000), color(0, 0, 255),scale(.9), { value: 0 }]);
+  const restart = add([text("Restart"), pos(1500, 1800), color(0, 0, 255),scale(.9), "restart",{ value: 0 }]);  const fakes = add([text("Fakes:0"), pos(24, 823), color(237,67,125), { value: 0 }]);
+  const timer = add([text(""), pos(24, 360), color(151, 36, 0),scale(0.7),{ value: 0 }]);
+  const timerDialogue = add([text("Timer:"),pos(24, 260), color(203,224,166),{ value: 0 }]);
+  const goal = add([text("Goal:20"), pos(24, 660), color(51,111,48),{ value: 0 }]);
 
-  
 
   // character dialog data
   
@@ -143,6 +140,17 @@ scene("main", (levelIdx) => {
       "-     s -",
       "-   @   -",
       "---------",
+    ],
+    [
+      " ///////=",
+      " = $ w o=",
+      " = a    =",
+      " = d  r = ",
+      " |2     =",
+      " = 1    =",
+      " =  3 s =",
+      " =  @   =",
+      " ////////",
     ],
   ];
 
@@ -200,7 +208,7 @@ scene("main", (levelIdx) => {
     "/": () => [sprite("grass"), area(),scale(1), solid()],
     "=": () => [sprite("grass"), area(),scale(1), solid()],
     "-": () => [sprite("steel"), area(), solid()],
-    "$": () => [sprite("jam"), area(),pos(500,200), scale(2), "jam"],
+    "$": () => [sprite("key"), area(),pos(500,200), scale(2), "key"],
     "@": () => [sprite("honeychuckles"), area(), solid(), "player", scale(3)],
     "|": () => [sprite("door"), area(), scale(1), pos(10,10), solid(), "door"],
     // any() is a special function that gets called everytime there's a
@@ -220,6 +228,8 @@ scene("main", (levelIdx) => {
     },
   });
 
+  // onClick(() => go("game"))
+
   // get the player game obj by tag
   const player = get("player")[0];
   const milk = get("milk")[0];
@@ -229,7 +239,7 @@ scene("main", (levelIdx) => {
   const rain = get("rain")[0]
   const cooler = get("cooler")[0];
   const sponsor = get("sponsor")[0];
-  const jam = get("jam")[0]
+  const key = get("key")[0]
   // const sponsor = get("sponsor")[0]
   function addDialog() {
     const h = 160;
@@ -386,13 +396,13 @@ scene("main", (levelIdx) => {
       score.value += 2;
       score.text = "Score:" + score.value;
     });
-    if ("jam") {
+    if ("key") {
       wait(10, () => {
-        destroy(jam);
+        destroy(key);
       });
     }
-    player.onCollide("jam", () => {
-      destroy(jam);
+    player.onCollide("key", () => {
+      destroy(key);
       play("wrongWord", volume(0.1));
       play("wordPoints",volume(0.9));
       fakes.value += 1;
@@ -452,8 +462,8 @@ scene("main", (levelIdx) => {
       score.value += 3;
       score.text = "Score:" + score.value;
     });
-    player.onCollide("jam", (key) => {
-      destroy(jam);
+    player.onCollide("key", (key) => {
+      destroy(key);
       play("keySound");
       hasKey = true;
       keyCount.value += 1;
@@ -463,8 +473,11 @@ scene("main", (levelIdx) => {
     player.onCollide("door", () => {
 
       if (hasKey && score.value >= 20) {
+        
+          const newbg = add([sprite("winbg", { width: width(), height: height() })]);
+        
         if (levelIdx + 1 < levels.length) {
-          go("youWon", levelIdx + 1);
+          go("main", levelIdx + 1);
         } else {
           go("win");
         }
