@@ -611,7 +611,7 @@ scene("main", (levelIdx) => {
       score.text = "Score:" + score.value;
     });
     if ("have") {
-      wait(18, () => {
+      wait(16, () => {
         destroy(have);
       });
     }
@@ -640,7 +640,7 @@ scene("main", (levelIdx) => {
     });
 
     if ("sponsor") {
-      wait(18, () => {
+      wait(16, () => {
         destroy(sponsor);
       });
     }
