@@ -11,6 +11,11 @@ loadSprite("door", "door.png");
 loadSprite("key", "key.png");
 loadSprite("honeychuckles", "honeychuckles.png");
 loadSprite("follower", "follower.png");
+loadSprite("follower2", "follower2.png");
+loadSprite("follower3", "follower3.png");
+loadSprite("follower4", "follower4.png");
+loadSprite("follower5", "follower5.png");
+loadSprite("side", "side.png");
 loadSprite("bg", "bg.png");
 loadSprite("milk", "milk.png");
 loadSprite("water", "water.png");
@@ -23,6 +28,7 @@ loadSprite("have", "have.png");
 loadSprite("rain", "rain.png");
 loadSprite("wall", "wall.png");
 loadSprite("side", "side.png");
+
 // SOUNDS
 loadSound("wordPoints", "pointSound.mp3");
 loadSound("keySound", "keySound.mp3");
@@ -287,11 +293,11 @@ scene("main", (levelIdx) => {
     [
       " ///////=",
       " = $ w o=",
-      " = a #  =",
+      " = a ^  =",
       " = d r  =",
-      " |2 # # =",
-      " = #1 # =",
-      " =  3 s =",
+      " |2 % & =",
+      " = ^#1% =",
+      " =  3s  =",
       " =  @   =",
       " ////////",
     ],
@@ -389,13 +395,45 @@ scene("main", (levelIdx) => {
     "/": () => [sprite("grass"), area(), scale(1), solid()],
     "=": () => [sprite("grass"), area(), scale(1), solid()],
     "-": () => [sprite("steel"), area(), solid()],
-    $: () => [sprite("key"), area(), pos(500, 200), rotate(0), scale(2), "key"],
+    "$": () => [sprite("key"), area(), pos(500, 200), rotate(0), scale(2), "key"],
     "@": () => [sprite("honeychuckles"), area(), solid(), "player", scale(3)],
     "#": () => [
       sprite("follower"),
       area(),
       solid(),
       "enemy",
+      scale(5),
+      pos(200, 10),
+    ],
+    "%": () => [
+      sprite("follower2"),
+      area(),
+      solid(),
+      "follower2",
+      scale(5),
+      pos(200, 10),
+    ],
+    "&": () => [
+      sprite("follower3"),
+      area(),
+      solid(),
+      "follower3",
+      scale(5),
+      pos(200, 10),
+    ],
+    "!": () => [
+      sprite("follower4"),
+      area(),
+      solid(),
+      "follower4",
+      scale(5),
+      pos(200, 10),
+    ],
+    "^": () => [
+      sprite("follower5"),
+      area(),
+      solid(),
+      "follower5",
       scale(5),
       pos(200, 10),
     ],
@@ -431,6 +469,10 @@ scene("main", (levelIdx) => {
   const sponsor = get("sponsor")[0];
   const key = get("key")[0];
   const enemy = get("enemy")[0]
+  const follower2 = get("follower2")
+  const follower3 = get("follower3")
+  const follower4 = get("follower4")
+  const follower5 = get("follower5")
 
   function addDialog() {
     const h = 160;
@@ -495,7 +537,7 @@ scene("main", (levelIdx) => {
 
   function water1PosRight() {
     if ("water") {
-      wait(21, () => {
+      wait(7, () => {
         destroy(water);
       });
     }
@@ -514,7 +556,7 @@ scene("main", (levelIdx) => {
 
   function fakeWords() {
     if ("eyes") {
-      wait(21, () => {
+      wait(3, () => {
         destroy(eyes);
       });
     }
@@ -542,7 +584,7 @@ scene("main", (levelIdx) => {
       score.text = "Score:" + score.value;
     });
     if ("rain") {
-      wait(21, () => {
+      wait(2, () => {
         destroy(rain);
       });
     }
@@ -557,7 +599,7 @@ scene("main", (levelIdx) => {
     });
 
     if ("sponsor") {
-      wait(21, () => {
+      wait(15, () => {
         destroy(sponsor);
       });
     }
@@ -572,7 +614,7 @@ scene("main", (levelIdx) => {
     });
 
     if ("cooler") {
-      wait(21, () => {
+      wait(5, () => {
         destroy(cooler);
       });
     }
@@ -604,7 +646,7 @@ scene("main", (levelIdx) => {
 
   function milkBottom() {
     if ("milk") {
-      wait(2, () => {
+      wait(5, () => {
         destroy(milk);
       });
     }
@@ -642,13 +684,8 @@ scene("main", (levelIdx) => {
   }
   fakeMilks();
 
-  function collisions() {
-    player.onCollide("enemy", () => {
-      play("wrongWord");
-      score.value -= 1;
-      score.text = "Score:" + score.value;
-    });
-
+  function collisions() { 
+  
     player.onCollide("door", () => {
       if (hasKey && score.value >= 20) {
         const newbg = add([
