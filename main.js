@@ -9,6 +9,7 @@ loadSprite("grass", "grass.png");
 loadSprite("steel", "steel.png");
 loadSprite("door", "door.png");
 loadSprite("key", "key.png");
+loadSprite("house", "house.png");
 loadSprite("honeychuckles", "honeychuckles.png");
 loadSprite("follower", "follower.png");
 loadSprite("follower2", "follower2.png");
@@ -23,6 +24,7 @@ loadSprite("cooler", "cooler.png");
 loadSprite("sponsor", "sponsor.png");
 loadSprite("bg", "bg.png");
 loadSprite("winbg", "winbg.png");
+loadSprite("winningBackground", "winningBackground.png");
 loadSprite("eyes", "eyes.png");
 loadSprite("have", "have.png");
 loadSprite("rain", "rain.png");
@@ -33,6 +35,58 @@ loadSprite("side", "side.png");
 loadSound("wordPoints", "pointSound.mp3");
 loadSound("keySound", "keySound.mp3");
 loadSound("wrongWord", "wrongWord.mp3");
+loadSound("victory", "victory.mp3");
+loadSound("magicalSound", "magicalSound.mp3");
+
+scene("win", () => {
+  wait(10, ()=> {
+    play("magicalSound")
+  })
+  play("victory");
+  const bg = add([
+    sprite("winningBackground", { width: width(), height: height() }),
+  ]);
+  const honeyChuckles = add([sprite("honeychuckles"), scale(4), pos(80, 1800), "player"]);
+  const honey = get("player")[0]
+  
+  let house = add([sprite("house"), pos(2500, 665), scale(40), "house",]);
+  add([
+    text(" You Made It!\nNow get home!", { size: 200 }),
+    pos(2100, 320),
+    origin("center"),
+    color(rgb(156, 211, 222)),
+  ]);
+
+  
+
+  // honey.onCollide("house", () => {
+  //   destroy(honey);
+  //   play("victory", volume(0.2));
+  // });
+
+  
+  //   honey.onCollide("house", () => {
+  //     play("victory")
+  //     destroy(honey)
+  //   })
+
+
+  const SPEED = 320
+
+  const dirs = {
+    left: LEFT,
+    right: RIGHT,
+    up: UP,
+    down: DOWN,
+  };
+
+  for (const dir in dirs) {
+    onKeyDown(dir, () => {
+      honey.move(dirs[dir].scale(SPEED));
+    });
+  }
+
+});
 
 scene("info", () => {
   const infobg = add([sprite("winbg", { width: width(), height: height() })]);
@@ -69,11 +123,10 @@ scene("info", () => {
   ]);
   let newGame = add([
     pos(pad),
-    text(
-      ` Press 'g' to start a new game!`),
+    text(` Press 'g' to start a new game!`),
     pos(1300, 2000),
   ]);
-  
+
   onKeyPress("g", () => {
     go("main", 0);
   });
@@ -81,11 +134,7 @@ scene("info", () => {
   onKeyPress("r", () => {
     go("start", 0);
   });
-
-
-
 });
-
 
 scene("start", () => {
   const bg = add([sprite("bg", { width: width(), height: height() })]);
@@ -102,7 +151,7 @@ scene("start", () => {
     });
   }
   info();
-  
+
   let curFont = 0;
   let curSize = 48;
   const pad = 100;
@@ -142,22 +191,12 @@ scene("start", () => {
     origin("center"),
   ]);
 
-  onKeyRelease("enter", () => {
+  onKeyPress("enter", () => {
     go("main", 0);
   });
-
 });
 
 go("start");
-
-scene("youWon", () => {
-  add([text("You Made It!"), pos(12), { width: width(), height: height() }]);
-  const winbg = add([sprite("winbg", { width: width(), height: height() })]);
-});
-
-wait(60, () => {
-  go("youWon");
-});
 
 scene("main", (levelIdx) => {
   function grow(rate) {
@@ -200,6 +239,14 @@ scene("main", (levelIdx) => {
     });
   }
   info();
+
+  function winnningScreen() {
+    onKeyPress("w", () => {
+      go("win");
+    });
+  }
+  winnningScreen();
+
   const SPEED = 320;
   const background = add([sprite("bg", { width: width(), height: height() })]);
   const keyCount = add([
@@ -226,15 +273,15 @@ scene("main", (levelIdx) => {
   const information = add([
     text(" \nPress 'i' \n  for   \nGame Info"),
     pos(24, 1695),
-    color(18,122,92),
+    color(18, 122, 92),
     scale(0.9),
     "information",
     { value: 0 },
   ]);
   const warning = add([
-    text("**!!Pressing \n'i' will \nlose Game \nProgress!!**", {outline: 0}),
+    text("**!!Pressing \n'i' will \nlose Game \nProgress!!**", { outline: 0 }),
     pos(24, 2020),
-    color(243,58,0),
+    color(243, 58, 0),
     scale(0.9),
     "warning",
     { value: 0 },
@@ -245,13 +292,7 @@ scene("main", (levelIdx) => {
     color(237, 67, 125),
     { value: 0 },
   ]);
-  const timer = add([
-    text(""),
-    pos(24, 360),
-    color(151, 36, 0),
-    scale(0.7),
-    { value: 0 },
-  ]);
+  const timer = add([text(""), pos(24, 360), color(151, 36, 0), scale(0.7)]);
   const timerDialogue = add([
     text("Timer:"),
     pos(24, 260),
@@ -270,7 +311,7 @@ scene("main", (levelIdx) => {
   const characters = {
     a: {
       sprite: "cooler",
-      scale: 4,
+      size: 40,
       msg: "Stalling!!",
     },
     b: {
@@ -291,14 +332,13 @@ scene("main", (levelIdx) => {
   // level layouts
   const levels = [
     [
-      " ///////=",
-      " = $ w o=",
-      " = a ^  =",
-      " = d r  =",
+      " ////////",
+      " / $ w o=",
+      " / a ^  =",
+      " / d r  =",
       " |2 % & =",
-      " = ^#1% =",
-      " =  3s  =",
-      " =  @   =",
+      " / ^#1% =",
+      " / @3s  =",
       " ////////",
     ],
     [
@@ -395,7 +435,7 @@ scene("main", (levelIdx) => {
     "/": () => [sprite("grass"), area(), scale(1), solid()],
     "=": () => [sprite("grass"), area(), scale(1), solid()],
     "-": () => [sprite("steel"), area(), solid()],
-    "$": () => [sprite("key"), area(), pos(500, 200), rotate(0), scale(2), "key"],
+    $: () => [sprite("key"), area(), pos(500, 200), rotate(0), scale(2), "key"],
     "@": () => [sprite("honeychuckles"), area(), solid(), "player", scale(3)],
     "#": () => [
       sprite("follower"),
@@ -437,7 +477,14 @@ scene("main", (levelIdx) => {
       scale(5),
       pos(200, 10),
     ],
-    "|": () => [sprite("door"), area(), scale(1), pos(10, 10), solid(), "door"],
+    "|": () => [
+      sprite("door"),
+      area(),
+      scale(1),
+      pos(0.0009, 10),
+      solid(),
+      "door",
+    ],
     // any() is a special function that gets called everytime there's a
     // symbole not defined above and is supposed to return what that symbol
     // means
@@ -468,11 +515,11 @@ scene("main", (levelIdx) => {
   const cooler = get("cooler")[0];
   const sponsor = get("sponsor")[0];
   const key = get("key")[0];
-  const enemy = get("enemy")[0]
-  const follower2 = get("follower2")
-  const follower3 = get("follower3")
-  const follower4 = get("follower4")
-  const follower5 = get("follower5")
+  const enemy = get("enemy")[0];
+  const follower2 = get("follower2");
+  const follower3 = get("follower3");
+  const follower4 = get("follower4");
+  const follower5 = get("follower5");
 
   function addDialog() {
     const h = 160;
@@ -527,17 +574,11 @@ scene("main", (levelIdx) => {
       timer.text = timeleft + `${timeleft === 1 ? "\nsecond" : "\nseconds"}`;
     }
     timeleft -= 1;
-    player.onCollide("door", () => {});
-    player.onCollide("door", () => {
-      if (hasKey && timeleft === 0) {
-        dialog.say("you ran out of time");
-      }
-    });
   }, 1000);
 
   function water1PosRight() {
     if ("water") {
-      wait(7, () => {
+      wait(10, () => {
         destroy(water);
       });
     }
@@ -556,7 +597,7 @@ scene("main", (levelIdx) => {
 
   function fakeWords() {
     if ("eyes") {
-      wait(3, () => {
+      wait(5, () => {
         destroy(eyes);
       });
     }
@@ -570,7 +611,7 @@ scene("main", (levelIdx) => {
       score.text = "Score:" + score.value;
     });
     if ("have") {
-      wait(21, () => {
+      wait(18, () => {
         destroy(have);
       });
     }
@@ -580,11 +621,11 @@ scene("main", (levelIdx) => {
       play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
-      score.value += 1;
+      score.value += 2;
       score.text = "Score:" + score.value;
     });
     if ("rain") {
-      wait(2, () => {
+      wait(5, () => {
         destroy(rain);
       });
     }
@@ -599,7 +640,7 @@ scene("main", (levelIdx) => {
     });
 
     if ("sponsor") {
-      wait(15, () => {
+      wait(18, () => {
         destroy(sponsor);
       });
     }
@@ -609,12 +650,12 @@ scene("main", (levelIdx) => {
       play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
-      score.value += 2;
+      score.value += 3;
       score.text = "Score:" + score.value;
     });
 
     if ("cooler") {
-      wait(5, () => {
+      wait(10, () => {
         destroy(cooler);
       });
     }
@@ -633,12 +674,13 @@ scene("main", (levelIdx) => {
       });
     }
     player.onCollide("key", () => {
+      hasKey = true;
       destroy(key);
       play("wrongWord", volume(0.1));
       play("wordPoints", volume(0.9));
-      fakes.value += 1;
-      fakes.text = "Fakes:" + fakes.value;
-      score.value += 2;
+      keyCount.value += 1;
+      keyCount.text = "Key?:" + keyCount.value;
+      score.value += 5;
       score.text = "Score:" + score.value;
     });
   }
@@ -646,7 +688,7 @@ scene("main", (levelIdx) => {
 
   function milkBottom() {
     if ("milk") {
-      wait(5, () => {
+      wait(10, () => {
         destroy(milk);
       });
     }
@@ -684,8 +726,7 @@ scene("main", (levelIdx) => {
   }
   fakeMilks();
 
-  function collisions() { 
-  
+  function collisions() {
     player.onCollide("door", () => {
       if (hasKey && score.value >= 20) {
         const newbg = add([
@@ -693,7 +734,7 @@ scene("main", (levelIdx) => {
         ]);
 
         if (levelIdx + 1 < levels.length) {
-          go("main", levelIdx + 1);
+          go("win", levelIdx + 1);
         } else {
           go("win");
         }
@@ -730,10 +771,6 @@ scene("main", (levelIdx) => {
       player.move(dirs[dir].scale(SPEED));
     });
   }
-});
-
-scene("win", () => {
-  add([text("You Win!"), pos(width() / 2, height() / 2), origin("center")]);
 });
 
 // loadSprite("honeychuckles","honeychuckles.png")
