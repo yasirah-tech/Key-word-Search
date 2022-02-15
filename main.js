@@ -10,22 +10,76 @@ loadSprite("steel", "steel.png");
 loadSprite("door", "door.png");
 loadSprite("key", "key.png");
 loadSprite("honeychuckles", "honeychuckles.png");
+loadSprite("follower", "follower.png");
 loadSprite("bg", "bg.png");
 loadSprite("milk", "milk.png");
 loadSprite("water", "water.png");
 loadSprite("cooler", "cooler.png");
 loadSprite("sponsor", "sponsor.png");
 loadSprite("bg", "bg.png");
-loadSprite("winbg", "winbg.png")
-loadSprite("eyes", "eyes.png")
-loadSprite("have", "have.png")
-loadSprite("rain", "rain.png")
-loadSprite("wall", "wall.png")
-loadSprite("side", "side.png")
+loadSprite("winbg", "winbg.png");
+loadSprite("eyes", "eyes.png");
+loadSprite("have", "have.png");
+loadSprite("rain", "rain.png");
+loadSprite("wall", "wall.png");
+loadSprite("side", "side.png");
 // SOUNDS
 loadSound("wordPoints", "pointSound.mp3");
 loadSound("keySound", "keySound.mp3");
 loadSound("wrongWord", "wrongWord.mp3");
+
+scene("info", () => {
+  const infobg = add([sprite("winbg", { width: width(), height: height() })]);
+  add([
+    text("Info", { size: 200 }),
+    pos(vec2(2035, 600)),
+    origin("center"),
+    color(rgb(156, 211, 222)),
+  ]);
+  let curFont = 0;
+  let curSize = 48;
+  const pad = 100;
+  let instructions = add([
+    pos(pad),
+    text(
+      ` You MUST have a
+    \n     key and 
+    \n    EXACTLY 20
+    \n  points to win!`,
+      {
+        //   width: width() - pad * 2,
+        //   size: curSize,
+        lineSpacing: 20,
+        letterSpacing: 40,
+        transform: (idx, ch) => ({
+          color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.9),
+          scale: 2,
+          angle: wave(-9, 9, time() * 3 + idx),
+        }),
+      },
+      { size: 120 }
+    ),
+    pos(vec2(1300, 810)),
+  ]);
+  let newGame = add([
+    pos(pad),
+    text(
+      ` Press 'g' to start a new game!`),
+    pos(1300, 2000),
+  ]);
+  
+  onKeyPress("g", () => {
+    go("main", 0);
+  });
+
+  onKeyPress("r", () => {
+    go("start", 0);
+  });
+
+
+
+});
+
 
 scene("start", () => {
   const bg = add([sprite("bg", { width: width(), height: height() })]);
@@ -36,44 +90,59 @@ scene("start", () => {
     color(rgb(156, 211, 222)),
   ]);
 
-  let curFont = 0
-  let curSize = 48
-  const pad = 100
-  const sprites = ["key"]
+  function info() {
+    onKeyPress("i", () => {
+      go("info");
+    });
+  }
+  info();
   
+  let curFont = 0;
+  let curSize = 48;
+  const pad = 100;
+  const sprites = ["key"];
+
   let instructions = add([
     pos(pad),
-    text(`    Win each level by
+    text(
+      `    Win each level by
     \n      reaching the 
     \n        goal and
-    \n  collecting the key!`, {
-    //   width: width() - pad * 2,
-    //   size: curSize,
-		lineSpacing: 20,
-		letterSpacing: 40,
-    transform: (idx, ch) => ({
-			color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
-			scale: (2),
-			angle: wave(-9, 9, time() * 3 + idx),
-		}),
-    }, {size: 120}),
+    \n  collecting the key!`,
+      {
+        //   width: width() - pad * 2,
+        //   size: curSize,
+        lineSpacing: 20,
+        letterSpacing: 40,
+        transform: (idx, ch) => ({
+          color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
+          scale: 2,
+          angle: wave(-9, 9, time() * 3 + idx),
+        }),
+      },
+      { size: 120 }
+    ),
     pos(vec2(1010, 990)),
   ]);
 
-  
   add([
-    text("Press enter to begin", {size: 100}),
+    text("Press enter to begin", { size: 100 }),
     pos(vec2(2030, 2010)),
+    origin("center"),
+  ]);
+  add([
+    text("Press 'i' for Game Info", { size: 100 }),
+    pos(vec2(2030, 2200)),
     origin("center"),
   ]);
 
   onKeyRelease("enter", () => {
     go("main", 0);
-  })
+  });
+
 });
 
-go("start")
-
+go("start");
 
 scene("youWon", () => {
   add([text("You Made It!"), pos(12), { width: width(), height: height() }]);
@@ -111,20 +180,87 @@ scene("main", (levelIdx) => {
   }
   late();
 
-  
+  // Press R to Restart
+  function restartCommand() {
+    onKeyPress("r", () => {
+      go("start");
+    });
+  }
+  restartCommand();
+
+  function info() {
+    onKeyPress("i", () => {
+      go("info");
+    });
+  }
+  info();
   const SPEED = 320;
-
   const background = add([sprite("bg", { width: width(), height: height() })]);
-  const keyCount = add([text("Key?:0"), pos(24, 490), color(253,207,9), { value: 0 }]);
-  const score = add([text("Score:0"), pos(24, 1000), color(0, 0, 255),scale(.9), { value: 0 }]);
-  const restart = add([text("Restart"), pos(1500, 1800), color(0, 0, 255),scale(.9), "restart",{ value: 0 }]);  const fakes = add([text("Fakes:0"), pos(24, 823), color(237,67,125), { value: 0 }]);
-  const timer = add([text(""), pos(24, 360), color(151, 36, 0),scale(0.7),{ value: 0 }]);
-  const timerDialogue = add([text("Timer:"),pos(24, 260), color(203,224,166),{ value: 0 }]);
-  const goal = add([text("Goal:20"), pos(24, 660), color(51,111,48),{ value: 0 }]);
-
+  const keyCount = add([
+    text("Key?:0"),
+    pos(24, 490),
+    color(253, 207, 9),
+    { value: 0 },
+  ]);
+  const score = add([
+    text("Score:0"),
+    pos(24, 1000),
+    color(0, 0, 255),
+    scale(0.9),
+    { value: 0 },
+  ]);
+  const restart = add([
+    text("Press 'r'\nto  Restart"),
+    pos(24, 1500),
+    color(148, 195, 74),
+    scale(0.9),
+    "restart",
+    { value: 0 },
+  ]);
+  const information = add([
+    text(" \nPress 'i' \n  for   \nGame Info"),
+    pos(24, 1695),
+    color(18,122,92),
+    scale(0.9),
+    "information",
+    { value: 0 },
+  ]);
+  const warning = add([
+    text("**!!Pressing \n'i' will \nlose Game \nProgress!!**", {outline: 0}),
+    pos(24, 2020),
+    color(243,58,0),
+    scale(0.9),
+    "warning",
+    { value: 0 },
+  ]);
+  const fakes = add([
+    text("Fakes:0"),
+    pos(24, 823),
+    color(237, 67, 125),
+    { value: 0 },
+  ]);
+  const timer = add([
+    text(""),
+    pos(24, 360),
+    color(151, 36, 0),
+    scale(0.7),
+    { value: 0 },
+  ]);
+  const timerDialogue = add([
+    text("Timer:"),
+    pos(24, 260),
+    color(203, 224, 166),
+    { value: 0 },
+  ]);
+  const goal = add([
+    text("Goal:20"),
+    pos(24, 660),
+    color(51, 111, 48),
+    { value: 0 },
+  ]);
 
   // character dialog data
-  
+
   const characters = {
     a: {
       sprite: "cooler",
@@ -140,9 +276,9 @@ scene("main", (levelIdx) => {
       msg: "not real!",
     },
   };
-  if(characters.key){
-    if(a.sprite === "cooler"){
-      scale(4)
+  if (characters.key) {
+    if (a.sprite === "cooler") {
+      scale(4);
     }
   }
 
@@ -151,23 +287,23 @@ scene("main", (levelIdx) => {
     [
       " ///////=",
       " = $ w o=",
-      " = a    =",
-      " = d  r = ",
-      " |2     =",
-      " = 1    =",
+      " = a #  =",
+      " = d r  =",
+      " |2 # # =",
+      " = #1 # =",
       " =  3 s =",
       " =  @   =",
       " ////////",
     ],
     [
-      "---------",
-      "-   l   -",
-      "- e   t -",
-      "-  $    -",
-      "t    e  -",
-      "- r     -",
-      "-     s -",
-      "-   @   -",
+      " --------",
+      " - #    |",
+      " -#  #r -",
+      " -# # 3 -",
+      " - # d#2-",
+      " - #  #o-",
+      " - @  #w-",
+      " =======-",
       "---------",
     ],
     [
@@ -184,38 +320,52 @@ scene("main", (levelIdx) => {
   ];
 
   addLevel(levels[levelIdx], {
-    width: 300,
-    height: 180,
+    width: 500,
+    height: 300,
     pos: vec2(64, 64),
-    w: () => [sprite("milk"), area(), solid(), pos(100, 700), scale(4), "milk"],
+    w: () => [
+      sprite("milk"),
+      area(),
+      solid(),
+      pos(100, 700),
+      scale(4),
+      rotate(0),
+      "milk",
+    ],
     o: () => [
       sprite("water"),
       area(),
       solid(),
       pos(20, 250),
       scale(2),
+      rotate(0),
       "water",
     ],
     1: () => [
       sprite("eyes"),
       area(0.3),
       solid(),
-      pos(40,10),
+      pos(40, 10),
       scale(3),
+      rotate(0),
       "eyes",
-    ], 2: () => [
+    ],
+    2: () => [
       sprite("have"),
       area(),
       solid(),
       pos(500, 10),
       scale(4),
+      rotate(0),
       "have",
-    ], 3: () => [
+    ],
+    3: () => [
       sprite("rain"),
       area(),
       solid(),
       pos(500, 100),
       scale(4),
+      rotate(0),
       "rain",
     ],
     r: () => [
@@ -224,6 +374,7 @@ scene("main", (levelIdx) => {
       solid(),
       pos(100, 90),
       scale(2),
+      rotate(0),
       "cooler",
     ],
     d: () => [
@@ -232,14 +383,23 @@ scene("main", (levelIdx) => {
       solid(),
       pos(100, 30),
       scale(2),
+      rotate(0),
       "sponsor",
     ],
-    "/": () => [sprite("grass"), area(),scale(1), solid()],
-    "=": () => [sprite("grass"), area(),scale(1), solid()],
+    "/": () => [sprite("grass"), area(), scale(1), solid()],
+    "=": () => [sprite("grass"), area(), scale(1), solid()],
     "-": () => [sprite("steel"), area(), solid()],
-    "$": () => [sprite("key"), area(),pos(500,200), scale(2), "key"],
+    $: () => [sprite("key"), area(), pos(500, 200), rotate(0), scale(2), "key"],
     "@": () => [sprite("honeychuckles"), area(), solid(), "player", scale(3)],
-    "|": () => [sprite("door"), area(), scale(1), pos(10,10), solid(), "door"],
+    "#": () => [
+      sprite("follower"),
+      area(),
+      solid(),
+      "enemy",
+      scale(5),
+      pos(200, 10),
+    ],
+    "|": () => [sprite("door"), area(), scale(1), pos(10, 10), solid(), "door"],
     // any() is a special function that gets called everytime there's a
     // symbole not defined above and is supposed to return what that symbol
     // means
@@ -261,15 +421,17 @@ scene("main", (levelIdx) => {
 
   // get the player game obj by tag
   const player = get("player")[0];
+  const follower = get("enemy")[0];
   const milk = get("milk")[0];
   const water = get("water")[0];
-  const eyes = get("eyes")[0]
-  const have = get("have")[0]
-  const rain = get("rain")[0]
+  const eyes = get("eyes")[0];
+  const have = get("have")[0];
+  const rain = get("rain")[0];
   const cooler = get("cooler")[0];
   const sponsor = get("sponsor")[0];
-  const key = get("key")[0]
-  // const sponsor = get("sponsor")[0]
+  const key = get("key")[0];
+  const enemy = get("enemy")[0]
+
   function addDialog() {
     const h = 160;
     const pad = 16;
@@ -314,28 +476,26 @@ scene("main", (levelIdx) => {
 
   let hasKey = false;
   const dialog = addDialog();
-  var timeleft = 10;
+  var timeleft = 20;
   var downloadTimer = setInterval(function inerval() {
     if (timeleft <= 0) {
       clearInterval(downloadTimer);
       timer.text = "Finished";
     } else {
-      timer.text  =
-        timeleft + `${timeleft === 1 ? 'second': 'seconds'}`;
+      timer.text = timeleft + `${timeleft === 1 ? "\nsecond" : "\nseconds"}`;
     }
     timeleft -= 1;
+    player.onCollide("door", () => {});
     player.onCollide("door", () => {
-  }) 
-    player.onCollide("door", () => {
-      if(hasKey && timeleft === 0){
+      if (hasKey && timeleft === 0) {
         dialog.say("you ran out of time");
       }
-    })
+    });
   }, 1000);
 
   function water1PosRight() {
     if ("water") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(water);
       });
     }
@@ -354,42 +514,42 @@ scene("main", (levelIdx) => {
 
   function fakeWords() {
     if ("eyes") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(eyes);
       });
     }
     player.onCollide("eyes", () => {
       destroy(eyes);
       play("wrongWord", volume(0.2));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 3;
       score.text = "Score:" + score.value;
     });
     if ("have") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(have);
       });
     }
     player.onCollide("have", () => {
       destroy(have);
       play("wrongWord", volume(0.2));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 1;
       score.text = "Score:" + score.value;
     });
     if ("rain") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(rain);
       });
     }
     player.onCollide("rain", () => {
       destroy(rain);
       play("wrongWord", volume(0.1));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 2;
@@ -397,14 +557,14 @@ scene("main", (levelIdx) => {
     });
 
     if ("sponsor") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(sponsor);
       });
     }
     player.onCollide("sponsor", () => {
       destroy(sponsor);
       play("wrongWord", volume(0.1));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 2;
@@ -412,28 +572,28 @@ scene("main", (levelIdx) => {
     });
 
     if ("cooler") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(cooler);
       });
     }
     player.onCollide("cooler", () => {
       destroy(cooler);
       play("wrongWord", volume(0.1));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 2;
       score.text = "Score:" + score.value;
     });
     if ("key") {
-      wait(10, () => {
+      wait(21, () => {
         destroy(key);
       });
     }
     player.onCollide("key", () => {
       destroy(key);
       play("wrongWord", volume(0.1));
-      play("wordPoints",volume(0.9));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 2;
@@ -442,17 +602,16 @@ scene("main", (levelIdx) => {
   }
   fakeWords();
 
-
   function milkBottom() {
     if ("milk") {
-      wait(10, () => {
+      wait(2, () => {
         destroy(milk);
       });
     }
     player.onCollide("milk", () => {
       destroy(milk);
-      play("wrongWord",volume(0.1));
-      play("wordPoints",volume(0.9));
+      play("wrongWord", volume(0.1));
+      play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
       score.value += 2;
@@ -465,7 +624,6 @@ scene("main", (levelIdx) => {
     // const milk2 = add([sprite("milk"), pos(2000, 1400), scale(2), "milk2"]);
     // const milk3 = add([sprite("milk"), pos(700, 200), scale(3), "milk3"]);
     // const milk4 = add([sprite("milk"), pos(1300, 700), scale(4), "milk4"]);
-
     // if("milk2"){
     //   wait(5, () => {
     //     destroy(milk2)
@@ -485,37 +643,34 @@ scene("main", (levelIdx) => {
   fakeMilks();
 
   function collisions() {
-    player.onCollide("sponsor", () => {
-      destroy(sponsor);
-      play("wordPoints");
-      score.value += 3;
+    player.onCollide("enemy", () => {
+      play("wrongWord");
+      score.value -= 1;
       score.text = "Score:" + score.value;
-    });
-    player.onCollide("key", (key) => {
-      destroy(key);
-      play("keySound");
-      hasKey = true;
-      keyCount.value += 1;
-      keyCount.text = "Key?:" + 1;
     });
 
     player.onCollide("door", () => {
-
       if (hasKey && score.value >= 20) {
-        
-          const newbg = add([sprite("winbg", { width: width(), height: height() })]);
-        
+        const newbg = add([
+          sprite("winbg", { width: width(), height: height() }),
+        ]);
+
         if (levelIdx + 1 < levels.length) {
           go("main", levelIdx + 1);
         } else {
           go("win");
         }
       } else {
-        return hasKey && score.value < 20 ? dialog.say(`You have a key, but you only have ${score.value} points, you need ${20 - score.value} more points!`): dialog.say("Can't unlock! Must have key and 20 points!");
+        return hasKey && score.value < 20
+          ? dialog.say(
+              `You have a key, but you only have ${
+                score.value
+              } points, you need ${20 - score.value} more points!`
+            )
+          : dialog.say("Can't unlock! Must have key and 20 points!");
       }
     });
 
-    
     // talk on touch
     player.onCollide("character", (ch) => {
       dialog.say(ch.msg);
@@ -543,8 +698,6 @@ scene("main", (levelIdx) => {
 scene("win", () => {
   add([text("You Win!"), pos(width() / 2, height() / 2), origin("center")]);
 });
-
-
 
 // loadSprite("honeychuckles","honeychuckles.png")
 // loadSprite("bag", "bag.png")
@@ -871,4 +1024,3 @@ scene("win", () => {
 // // })
 
 // // })
-
