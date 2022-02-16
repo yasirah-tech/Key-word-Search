@@ -39,39 +39,40 @@ loadSound("victory", "victory.mp3");
 loadSound("magicalSound", "magicalSound.mp3");
 
 scene("win", () => {
-  wait(10, ()=> {
-    play("magicalSound")
-  })
+  wait(10, () => {
+    play("magicalSound");
+  });
   play("victory");
   const bg = add([
     sprite("winningBackground", { width: width(), height: height() }),
   ]);
-  const honeyChuckles = add([sprite("honeychuckles"), scale(4), pos(80, 1800), "player"]);
-  const honey = get("player")[0]
-  
-  let house = add([sprite("house"), pos(2500, 665), scale(40), "house",]);
+  const honeyChuckles = add([
+    sprite("honeychuckles"),
+    scale(4),
+    pos(80, 1800),
+    "player",
+  ]);
+  const honey = get("player")[0];
+
+  let house = add([sprite("house"), pos(2500, 665), scale(40), "house"]);
   add([
-    text(" You Made It!\nNow get home!", { size: 200 }),
+    text("   You Made It \n Now get home", { size: 200 }),
     pos(2100, 320),
     origin("center"),
     color(rgb(156, 211, 222)),
   ]);
-
-  
 
   // honey.onCollide("house", () => {
   //   destroy(honey);
   //   play("victory", volume(0.2));
   // });
 
-  
   //   honey.onCollide("house", () => {
   //     play("victory")
   //     destroy(honey)
   //   })
 
-
-  const SPEED = 320
+  const SPEED = 320;
 
   const dirs = {
     left: LEFT,
@@ -85,7 +86,6 @@ scene("win", () => {
       honey.move(dirs[dir].scale(SPEED));
     });
   }
-
 });
 
 scene("info", () => {
@@ -119,13 +119,19 @@ scene("info", () => {
       },
       { size: 120 }
     ),
-    pos(vec2(1300, 810)),
+    pos(vec2(1300, 900)),
   ]);
   let newGame = add([
     pos(pad),
-    text(` Press 'g' to start a new game!`),
+    text(` Press 'g' to start a new game`),
     pos(1300, 2000),
   ]);
+
+  add([
+  pos(pad),
+  text(`   Press 'r' for Home Screen`),
+    pos(1300, 2180),
+  ])
 
   onKeyPress("g", () => {
     go("main", 0);
@@ -139,7 +145,7 @@ scene("info", () => {
 scene("start", () => {
   const bg = add([sprite("bg", { width: width(), height: height() })]);
   add([
-    text(" KeKy Game Project", { size: 200 }),
+    text("Key-word Search", { size: 200 }),
     pos(vec2(2035, 600)),
     origin("center"),
     color(rgb(156, 211, 222)),
@@ -160,10 +166,12 @@ scene("start", () => {
   let instructions = add([
     pos(pad),
     text(
-      `    Win each level by
-    \n      reaching the 
-    \n        goal and
-    \n  collecting the key!`,
+      `     Win by reaching
+    \n       the goal and
+    \n      collecting the
+    \n          key and  
+    \n     word pieces before 
+    \n       they disappear`,
       {
         //   width: width() - pad * 2,
         //   size: curSize,
@@ -177,7 +185,7 @@ scene("start", () => {
       },
       { size: 120 }
     ),
-    pos(vec2(1010, 990)),
+    pos(vec2(920, 835)),
   ]);
 
   add([
@@ -635,7 +643,7 @@ scene("main", (levelIdx) => {
       play("wordPoints", volume(0.9));
       fakes.value += 1;
       fakes.text = "Fakes:" + fakes.value;
-      score.value += 2;
+      score.value += 3;
       score.text = "Score:" + score.value;
     });
 
